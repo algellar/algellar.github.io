@@ -8,9 +8,21 @@
     <link href="/2022/11/13/test/"/>
     <url>/2022/11/13/test/</url>
     
-    <content type="html"><![CDATA[<p>test<br><img src="/test/a.png" alt="图片引用方法二"></p>]]></content>
+    <content type="html"><![CDATA[<p>test<br><img src="/images/test.png" alt="test"></p>]]></content>
     
     
+    <categories>
+      
+      <category>blog</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>configure</tag>
+      
+    </tags>
     
   </entry>
   
