@@ -1,0 +1,671 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/persist.png">
+  <link rel="icon" href="/img/persist.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="algellar">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="12345678910111213141516171819202122232425262728293031323334from Crypto.Util.number import *from secret import flagm &#x3D; Integer(int.from_bytes(flag, &amp;#x27;big&amp;#x27;))for _ in range(7):    p &#x3D; getPrime(5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SMUPE problem in ECC">
+<meta property="og:url" content="https://algellar.github.io/2022/11/20/elliptic%20curve/SMUPE%20problem/index.html">
+<meta property="og:site_name" content="迅行">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728293031323334from Crypto.Util.number import *from secret import flagm &#x3D; Integer(int.from_bytes(flag, &amp;#x27;big&amp;#x27;))for _ in range(7):    p &#x3D; getPrime(5">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-20T12:48:45.720Z">
+<meta property="article:author" content="algellar">
+<meta property="article:tag" content="elliptic curve">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>SMUPE problem in ECC - 迅行</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"algellar.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>algellar</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/persist.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SMUPE problem in ECC"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-20 00:00" pubdate>
+          2022年11月20日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">SMUPE problem in ECC</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> secret <span class="hljs-keyword">import</span> flag<br><br>m = Integer(<span class="hljs-built_in">int</span>.from_bytes(flag, <span class="hljs-string">&#x27;big&#x27;</span>))<br><br><span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">7</span>):<br>    p = getPrime(<span class="hljs-number">512</span>)<br>    q = getPrime(<span class="hljs-number">512</span>)<br>    n = p * q<br>    <span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:<br>        <span class="hljs-keyword">try</span>:<br>            a = randint(<span class="hljs-number">0</span>,n)<br>            b = randint(<span class="hljs-number">0</span>,n)<br>            Ep = EllipticCurve(GF(p), [a,b])<br>            Gp = Ep.lift_x(m) * <span class="hljs-number">2</span><br>            Eq = EllipticCurve(GF(q), [a,b])<br>            Gq = Eq.lift_x(m) * <span class="hljs-number">2</span><br>            y = crt([<span class="hljs-built_in">int</span>(Gp[<span class="hljs-number">1</span>]),<span class="hljs-built_in">int</span>(Gq[<span class="hljs-number">1</span>])],[p,q])<br>            <span class="hljs-keyword">break</span><br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">pass</span><br>    <span class="hljs-built_in">print</span>(n, a, b, y)<br><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">172294871449219734798107561390050953188521804048922822821089133469311203282838373380377875439026704763161795744755842077098168865000919622849058673563093367982208461406754463061486548381031910500664522644112851433538900220678158500614358889303283424512500613989230182706150280378108198120547975067586971516137 96364198848848705158285537079110423277195642567952259110364340716064235491391751428297894031158531380770390132279773351908864500464136898214435682124920058680787844361038830281655403525413688733800204992965035715298006768830075744486662160034641936095862260725417156381782604284050422013822430528431227361197 159671991296677830056301471254363341009296510275785264872785778012113694456980363802313449256308519721141732376201460773400245993593482589976204166133901861729668851862460623196007194950257183079347864250025089670843915918257755173390253034175544519724905752818035812997127673241875836037243219829705927834235 12488950718303582218034044014469231718831962762275496002247643231013156969740771432142283441219754679322796472657777272189002660471344265360278317729760143808888761286079001687689905847842340334026140684913862478238950679283842053262939984135114755914484999538131508882930756717834516619580846526035684240079</span><br><span class="hljs-string">68223999778327454147340278776103578457271553299042143933393545815264609973076698756926443268448068478170652356574414692081569784751387548589991131379073395697581788909441130777261041802381911726085217610218552072019955091687392945670505312431379412346500975722411035854097380678429943612541679085918327184211 17770738203348676394013528065573927253738684355484382993047842078725009503696773096846474265836623641852326745278003624730438619552362071702422399552544609521188676816688215350418290389310564969049643786010837155281593524360805215661135722530433990410365868360692605842180028752038342347560333735922237369889 51098779961961751158122915158869440252746637314825788279336277128573162559246638101764647720433607480890890353266404408862366250798238531789338353122957455620883022785518154730850781795813200407904530871476660815008994170944440212300679621717029986782069464962522083711578039350861054405841275173019925642093 66166716533207612504484627791108393201158937155973610986551130733271280578971089095120371889664007733286220189256643852916722857958108530989447774212301117302384387307543583321894175828438280849870887046734108846642477438172082973113653660108354098554353657568190553303062608249271483295596847725316287446947</span><br><span class="hljs-string">69746411945288680494756625186262685100915769718266292828317232438356233082561457717802913380129463210508761458218383450347346543878887508111863823958801568318184343480949172473544777648327814945820830887234292193752526478863127665281603760310028685488010810374501002997654985226277837410385612336235789850487 35863433752003593718423506765770617029528142232119703360783695175632253222988642577448933602236360173888236658825392990787632391883856639629797550839027484460834276938254229716767734096212580735483050576113358898294845949901713373921320977266743302353193505619551975822052525104591593619094885194563759053232 61506888586914853748952584136999168853842713393989804770066310267385965404827751126077340386083884094392293257188958096424196079983180753698925334131753282172406136172626322186930421581433234090454842658630759776836012464473239198489670974246600345527623012180678219362862337775047849600595500703273175382703 23074173610330067975119318094549104916729459916683840171011959880097244030586124074672098644510552431454003148712810460842866906744010629559390690271268680358736511730336715376566599109974114862237643003353529058235474898207867615210853332379567542323247567216796697852808056755511484166810776261406177054777</span><br><span class="hljs-string">141780415980139617437215295846801567101402173619252056827987183835073254193657239443065408850513736462591151306400635298582358011825422183971334048391966413113755453698068836508230018713283240471925059428429812726435729369274579669831159812818547912726106821393226089324568082296082476059592963374588189677903 138746424736113892630456472492513519297466193136237748713651792342224061188757613931171106142936354280921317637536324608330692729231708881940151586955111567707002290198592160272885704125491274615556183787626484145861344784010051348839767532854926101536139055358860932766313079790639566311374298333660022416019 51726115599556454603920201657250521837735902629404616832316825062102322966835183071269936236690928753491837133603376577256803231041384630057026503126306733001505942744679790303330123718230247169888465167921020819210505089269412155033260560735554086852090518639465729269946494965164436190741639956526409236643 109654409762022740069514851260972908347716034747536569205325610944369939818174396230317316392277341065510361034050535743153611162427943916414124861678979771914963184421776448698855312979564147449272690263825911213298037101520123605413049352651130798112394668303713018564867048267647962314886530354112656660927</span><br><span class="hljs-string">134695529317631291539146989750080778456288116909537330643076226015019499585100645219201149819193483942761047608937632376000045678037096949063251694636264176978864350498001325274216745015187611426633155307352514688833306265311483797036137536737138146820693626589997367590775993967122039778179174477656098285151 5739321199968321627369946084893217618156071099515645889496757563432120794798492968096997315087609783917559636235489259519655394193193715753364023338741839200775528051686566670968651457520145892918236829346679247967821973265175306801170339421046331421835781903320059400232340368113764816537593043564619129091 19673160600783884558420797494268753813890359647736289572838063131711269874000492472573124412257756881986515876284947639879236228461164246881762817017531477201318279812271247605969526804283198993102225186731231831294213792057134691470071907311239898997202853181993775441584378767147396666275272938837258357423 16897173108120076789922861933836017988034034913979337434078332952051799507194042012051980050429727113676699771772883294665409080790164523153924333774353032403848045609407735317482100956730663470698029136912240237112767052198706217408124644467054727063902614284435035076029952831418531957452256906889271788660</span><br><span class="hljs-string">108631997335203066432695467871764765359535346338288176017618709868611883736328359105943651466896885704753893021031355220198313022607240746637026558990572053372001779938093596718948899761553876823305187704800253652009189892280549587130446638129290899670752310731109594745013563422110453795138476510927065537819 53186625650395498513439276601148324935331371411190607911833993964075202667438243234505710009859940105805328184291501428682891944699728069011511208448749132382024172290085402121472873185791975075398049469908097240414598661986593060452061227701643807521128142747260925759613091495839896971643248717676885197644 52709509084184104167650277788945043330126097533959255658173397630643774367938336071212214281041856314502929120225540280940224731284318314188334401609349175298441766962844025460361899368481713758076026229654035313132750449381123295594073954550981806651354410007449428669257683889916088487170632832744327614463 100260604505216418319923489428146996468156773172005794829064325549637959539041791314163531463726947409321908377241081956519122122262033227578640846072409813184989637914837945813897560451295053865278594114754492413312832734981399784589146893658856979887630033309457853967429746353718137461785133619446282493126</span><br><span class="hljs-string">107338361645955025621587108367500347348984102219339572552748381028739611029946302714920823684765311935547487453509535204574142858361737866739285841603885839441733030101476343149903190982542554096941815202891147725076023628145124709929620451309674856615713933442851718371615889591966077523086598769484929332367 100872379615239890056528793994805290254429184626178615179949021889055871474237228059318594996850343091819482928969268211528584474928620075395005093777657472616646086984808630643337673511907312828907027299569420774094158785966357193601409625830742669863851550399504009908003166662860318527135193218238780676800 52637469044026090728662077516653409825725186092147185410215323273449329656983845536711234923756687817513771235055035977388966611329613167758082577958758423429648769821507972676781188078791048118663252233256924489724994317727922287107822238963194994782575166160292521918653409858431855957865223409101119244152 57971958593516466763891620734062821771076712450708456876484562483981622035231519724366540336500884101001407519929342324257929081898526022577405465205118192907601214300359691638071300661277784420068767639904239138656962018735555155063349452232501292852176876546222413194770858197241287367089881969293760207489</span><br><span class="hljs-string"></span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/compet/" class="category-chain-item">compet</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/elliptic-curve/">#elliptic curve</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SMUPE problem in ECC</div>
+      <div>https://algellar.github.io/2022/11/20/elliptic curve/SMUPE problem/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>algellar</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/20/Lattice/create%20lattice%20for%20PRNG/" title="create lattice for PRNG">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">create lattice for PRNG</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/20/Lattice/reconstruct%20modulus%20by%20lattice/" title="reconstruct modulus by lattice">
+                        <span class="hidden-mobile">reconstruct modulus by lattice</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
