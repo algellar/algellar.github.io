@@ -65,6 +65,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/fluid-extention.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -95,7 +99,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>algellar</strong>
+      <strong>algellar&#39;s Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -205,13 +209,6 @@
   <div class="mt-3">
     
     
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-11-20 00:00" pubdate>
-          2022年11月20日 凌晨
-        </time>
-      </span>
-    
   </div>
 
   <div class="mt-1">
@@ -247,12 +244,20 @@
 
     </div>
 
-    <div class="col-lg-10 nopadding-x-md">
+    <div class="col-lg-9 nopadding-x-md">
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">create lattice for PRNG</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2022年11月22日 下午
+                  
+                
+              </p>
             
             
               <div class="markdown-body">
@@ -395,15 +400,21 @@ A_i(Gh_0+l_0)+B_i(Gh_1+l_1) \equiv Gh_i+l_i (\bmod n_1)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/11/20/elliptic%20curve/SMUPE%20problem/" title="SMUPE problem in ECC">
+                      <a href="/2022/11/20/Lattice/Inequality_Solving_with_CVP/" title="Inequality_Solving_with_CVP">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">SMUPE problem in ECC</span>
+                        <span class="hidden-mobile">Inequality_Solving_with_CVP</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2022/11/20/Lattice/reconstruct%20modulus%20by%20lattice/" title="reconstruct modulus by lattice">
+                        <span class="hidden-mobile">reconstruct modulus by lattice</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
@@ -420,7 +431,10 @@ A_i(Gh_0+l_0)+B_i(Gh_1+l_1) \equiv Gh_i+l_i (\bmod n_1)
       
   <aside class="sidebar" style="margin-left: -1rem">
     <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
   <div class="toc-body" id="toc-body"></div>
 </div>
 

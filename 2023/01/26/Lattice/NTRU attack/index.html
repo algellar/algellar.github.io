@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/persist.png">
+  <link rel="icon" href="/img/persist.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="algellar">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="NTRU 常见攻击 本文总结了几种NTRU攻击，包括经典格攻击、多次加密同一明文攻击。 NTRU加密流程  有些时候 h&#x3D;p∗Fq∗gh&#x3D;p*F_q*gh&#x3D;p∗Fq​∗g，e≡r∗h+m  (mod  q)e \equiv r*h+m \;(mod\;q)e≡r∗h+m(modq) ，如果这样做，ppp 理论上可以不公开。 条件 q&gt;(6d+1)pq&gt;(6d+1)pq&gt;(6d+1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTRU attack">
+<meta property="og:url" content="https://algellar.github.io/2023/01/26/Lattice/NTRU%20attack/index.html">
+<meta property="og:site_name" content="迅行">
+<meta property="og:description" content="NTRU 常见攻击 本文总结了几种NTRU攻击，包括经典格攻击、多次加密同一明文攻击。 NTRU加密流程  有些时候 h&#x3D;p∗Fq∗gh&#x3D;p*F_q*gh&#x3D;p∗Fq​∗g，e≡r∗h+m  (mod  q)e \equiv r*h+m \;(mod\;q)e≡r∗h+m(modq) ，如果这样做，ppp 理论上可以不公开。 条件 q&gt;(6d+1)pq&gt;(6d+1)pq&gt;(6d+1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://algellar.github.io/images/NTRU.png">
+<meta property="article:published_time" content="2023-01-26T03:38:05.342Z">
+<meta property="article:modified_time" content="2023-01-27T12:15:37.377Z">
+<meta property="article:author" content="algellar">
+<meta property="article:tag" content="lattice">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://algellar.github.io/images/NTRU.png">
+  
+  
+  
+  <title>NTRU attack - 迅行</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/fluid-extention.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"algellar.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>algellar&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/persist.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="NTRU attack"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-1">
+      
+
+    </div>
+
+    <div class="col-lg-9 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">NTRU attack</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年1月27日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>NTRU 常见攻击</h1>
+<p>本文总结了几种NTRU攻击，包括经典格攻击、多次加密同一明文攻击。</p>
+<h2 id="ntru加密流程">NTRU加密流程</h2>
+<p><img src="/images/NTRU.png" srcset="/img/loading.gif" lazyload alt="NTRU"></p>
+<p>有些时候 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mi>p</mi><mo>∗</mo><msub><mi>F</mi><mi>q</mi></msub><mo>∗</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">h=p*F_q*g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>≡</mo><mi>r</mi><mo>∗</mo><mi>h</mi><mo>+</mo><mi>m</mi><mtext>  </mtext><mo stretchy="false">(</mo><mi>m</mi><mi>o</mi><mi>d</mi><mtext>  </mtext><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">e \equiv r*h+m \;(mod\;q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.46375em;vertical-align:0em;"></span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.46528em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> ，如果这样做，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span> 理论上可以不公开。</p>
+<p>条件 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mo stretchy="false">(</mo><mn>6</mn><mi>d</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">q&gt;(6d+1)p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">6</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mord mathdefault">p</span></span></span></span> 需要的原因在于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∗</mo><mi>g</mi><mo>∗</mo><mi>r</mi><mo>+</mo><mi>f</mi><mo>∗</mo><mi>m</mi><mtext>  </mtext><mo stretchy="false">(</mo><mi>m</mi><mi>o</mi><mi>d</mi><mtext>  </mtext><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p*g*r+f*m\;(mod\; q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> 的系数要小于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span></span></span></span> ，以便进行后一步解密。分析如下：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∗</mo><mi>g</mi><mo>∗</mo><mi>r</mi></mrow><annotation encoding="application/x-tex">p*g*r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span></span></span></span> 的系数最大为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∗</mo><mn>2</mn><mi>d</mi></mrow><annotation encoding="application/x-tex">p*2d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6597200000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">d</span></span></span></span> ，而 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>∗</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">f*m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span> 系数的最大值为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mi>d</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>∗</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>p</mi></mrow><annotation encoding="application/x-tex">(2d+1)*\frac{1}{2}p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.190108em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord mathdefault">p</span></span></span></span> ，从而两者相加系数不超过 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>3</mn><mi>d</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>∗</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>p</mi></mrow><annotation encoding="application/x-tex">(3d+1)*\frac{1}{2}p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">3</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.190108em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord mathdefault">p</span></span></span></span> ， <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mo stretchy="false">(</mo><mn>6</mn><mi>d</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">q&gt;(6d+1)p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">6</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mord mathdefault">p</span></span></span></span> 显然是更高的界。</p>
+<p>这也说明，只要 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo separator="true">,</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">f, g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span></span></span></span> 满足 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><msub><mi>F</mi><mi>q</mi></msub><mo>∗</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">h=F_q*g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span></span></span></span> 并且 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo separator="true">,</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">f, g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span></span></span></span> 要足够小，即可作为私钥解密。</p>
+<h2 id="格攻击得到私钥">格攻击得到私钥</h2>
+<p>由于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>∗</mo><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≡</mo><mi>g</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mtext>  </mtext><mo stretchy="false">(</mo><mi>m</mi><mi>o</mi><mi>d</mi><mtext>  </mtext><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)*h(x)\equiv g(x)\;(mod\; q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> ，所以存在多项式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">u(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> 使得 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>∗</mo><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>+</mo><mi>q</mi><mi>u</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)*h(x)=g(x)+qu(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault">u</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> 。可以构造格子满足：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>f</mi><mo separator="true">,</mo><mo>−</mo><mi>u</mi><mo stretchy="false">)</mo><msubsup><mi>M</mi><mi>h</mi><mrow><mi>N</mi><mi>T</mi><mi>R</mi><mi>U</mi></mrow></msubsup><mo>=</mo><mo stretchy="false">(</mo><mi>f</mi><mo separator="true">,</mo><mi>g</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(f,-u)M^{NTRU}_h = (f, g)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">−</span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">h</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span></span></span></span> 。</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>M</mi><mi>h</mi><mrow><mi>N</mi><mi>T</mi><mi>R</mi><mi>U</mi></mrow></msubsup><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.15999999999999992em" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>h</mi></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>q</mi></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">M^{NTRU}_h=\left(\begin{matrix}
+				1&amp;h\\
+				0&amp;q
+			\end{matrix}	\right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.138331em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">h</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.4099999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9500000000000004em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">h</span></span></span><span style="top:-2.4099999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9500000000000004em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span></span></p>
+<h2 id="重复明文攻击">重复明文攻击</h2>
+<p>根据 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>≡</mo><mi>r</mi><mo>∗</mo><mi>h</mi><mo>+</mo><mi>m</mi><mtext>  </mtext><mo stretchy="false">(</mo><mi>m</mi><mi>o</mi><mi>d</mi><mtext>  </mtext><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">e \equiv r*h+m \;(mod\;q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.46375em;vertical-align:0em;"></span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.46528em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> ，如果我们让公钥重复加密同一明文，那我们则会得到很多组类似 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mi>i</mi></msub><mo>−</mo><msub><mi>e</mi><mn>0</mn></msub><mo>≡</mo><mi>h</mi><mo stretchy="false">(</mo><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><msub><mi>r</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mtext>  </mtext><mo stretchy="false">(</mo><mi>m</mi><mi>o</mi><mi>d</mi><mtext>  </mtext><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">e_i-e_0 \equiv h(r_i-r_0)\; (mod\; q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.61375em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> 的方程。由于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>∈</mo><mi mathvariant="script">I</mi><mo stretchy="false">(</mo><mi>d</mi><mo separator="true">,</mo><mi>d</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="1em"/><mi>d</mi><mo>&lt;</mo><mo>&lt;</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">r \in \mathcal{I}(d, d) ,\quad d &lt;&lt;N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.07382em;">I</span></span><span class="mopen">(</span><span class="mord mathdefault">d</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">d</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:1em;"></span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span></span> ，所以在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><msub><mi>r</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(r_i-r_0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 中，系数重复出现最多的可能就是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">r_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的系数，从而得到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">r_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 。</p>
+<p>而问题在与 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span></span></span></span> 在商环 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span></span></span></span> 中不可逆，处理这个的方法有几种，较为方便的就是将 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo separator="true">,</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">h,R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">h</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span></span></span></span> 同时除去它们的公因子，之后 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span></span></span></span> 就可逆了。</p>
+<h2 id="代码">代码</h2>
+<h3 id="1-ntru加密">1.NTRU加密</h3>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><code class="hljs stylus">from random import shuffle, getrandbits<br>from Crypto<span class="hljs-selector-class">.Util</span><span class="hljs-selector-class">.number</span> import *<br>Zx = <span class="hljs-built_in">PolynomialRing</span>(ZZ, <span class="hljs-string">&#x27;x&#x27;</span>)<br>x = Zx<span class="hljs-selector-class">.gen</span>()<br><br><br>def <span class="hljs-built_in">convolution</span>(f, g, R):<br>    return (f * g) % R<br><br><br>def <span class="hljs-built_in">balancedmod</span>(f, <span class="hljs-selector-tag">q</span>, R):<br>    g = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">map</span>(lambda x: ((x + q<span class="hljs-comment">//2) % q) - q//2, f.list()))</span><br>    return <span class="hljs-built_in">Zx</span>(g) % R<br><br><br>def <span class="hljs-built_in">random_poly</span>(n, d1, d2):<br>    assert d1 + d2 &lt;= n<br>    result = d1 * <span class="hljs-selector-attr">[1]</span> + d2 * <span class="hljs-selector-attr">[-1]</span> + (n - d1 - d2) * <span class="hljs-selector-attr">[0]</span><br>    <span class="hljs-built_in">shuffle</span>(result)<br>    return <span class="hljs-built_in">Zx</span>(result)<br><br><br>def <span class="hljs-built_in">invert_poly_mod_prime</span>(f, R, p):<br>    T = Zx<span class="hljs-selector-class">.change_ring</span>(<span class="hljs-built_in">Integers</span>(p))<span class="hljs-selector-class">.quotient</span>(R)<br>    return <span class="hljs-built_in">Zx</span>(<span class="hljs-built_in">lift</span>(<span class="hljs-number">1</span> / <span class="hljs-built_in">T</span>(f)))<br><br><br>def <span class="hljs-built_in">invert_poly_mod_powerof2</span>(f, R, q):  #  f 在模 <span class="hljs-number">2</span>^<span class="hljs-number">16</span> 下的逆<br>    g = <span class="hljs-built_in">invert_poly_mod_prime</span>(f, R, <span class="hljs-number">2</span>)<br>    e = <span class="hljs-built_in">log</span>(<span class="hljs-selector-tag">q</span>, <span class="hljs-number">2</span>)<br>    <span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, e):<br>        g = ((<span class="hljs-number">2</span> * g - f * g ** <span class="hljs-number">2</span>) % R) % <span class="hljs-selector-tag">q</span><br>    return g<br><br><br>class NTRUCipher:<br>    def <span class="hljs-built_in">__init__</span>(self, N, <span class="hljs-selector-tag">p</span>, <span class="hljs-selector-tag">q</span>, d):<br>        self<span class="hljs-selector-class">.N</span> = N<br>        self<span class="hljs-selector-class">.p</span> = <span class="hljs-selector-tag">p</span><br>        self<span class="hljs-selector-class">.q</span> = <span class="hljs-selector-tag">q</span><br>        self<span class="hljs-selector-class">.d</span> = d<br>        self<span class="hljs-selector-class">.R</span> = x ** N - <span class="hljs-number">1</span><br>        # key generation<br>        self<span class="hljs-selector-class">.g</span> = <span class="hljs-built_in">random_poly</span>(self<span class="hljs-selector-class">.N</span>, d, d)<br>        # self<span class="hljs-selector-class">.g</span> = x^<span class="hljs-number">119</span> - x^<span class="hljs-number">115</span> - x^<span class="hljs-number">112</span> + x^<span class="hljs-number">111</span> + x^<span class="hljs-number">110</span> - x^<span class="hljs-number">106</span> + x^<span class="hljs-number">103</span> - x^<span class="hljs-number">101</span> + x^<span class="hljs-number">100</span> - x^<span class="hljs-number">99</span> + x^<span class="hljs-number">98</span> - x^<span class="hljs-number">97</span> - x^<span class="hljs-number">96</span> + x^<span class="hljs-number">95</span> - x^<span class="hljs-number">90</span> + x^<span class="hljs-number">89</span> - x^<span class="hljs-number">88</span> - x^<span class="hljs-number">86</span> + x^<span class="hljs-number">85</span> + x^<span class="hljs-number">83</span> + x^<span class="hljs-number">82</span> + x^<span class="hljs-number">75</span> - x^<span class="hljs-number">74</span> + x^<span class="hljs-number">69</span> - x^<span class="hljs-number">64</span> + x^<span class="hljs-number">62</span> + x^<span class="hljs-number">58</span> + x^<span class="hljs-number">57</span> + x^<span class="hljs-number">54</span> - x^<span class="hljs-number">51</span> + x^<span class="hljs-number">50</span> - x^<span class="hljs-number">45</span> - x^<span class="hljs-number">42</span> + x^<span class="hljs-number">41</span> - x^<span class="hljs-number">40</span> - x^<span class="hljs-number">38</span> + x^<span class="hljs-number">37</span> - x^<span class="hljs-number">36</span> - x^<span class="hljs-number">35</span> - x^<span class="hljs-number">34</span> - x^<span class="hljs-number">32</span> - x^<span class="hljs-number">31</span> + x^<span class="hljs-number">30</span> - x^<span class="hljs-number">29</span> - x^<span class="hljs-number">27</span> + x^<span class="hljs-number">26</span> + x^<span class="hljs-number">25</span> + x^<span class="hljs-number">22</span> + x^<span class="hljs-number">20</span> - x^<span class="hljs-number">18</span> + x^<span class="hljs-number">16</span> + x^<span class="hljs-number">15</span> - x^<span class="hljs-number">14</span> - x^<span class="hljs-number">13</span> + x^<span class="hljs-number">12</span> - x^<span class="hljs-number">8</span> + x^<span class="hljs-number">7</span> + x^<span class="hljs-number">6</span> - x^<span class="hljs-number">4</span> - x<br>        while True:<br>            try:<br>                self<span class="hljs-selector-class">.f</span> = <span class="hljs-built_in">random_poly</span>(self<span class="hljs-selector-class">.N</span>, d + <span class="hljs-number">1</span>, d)<br>                # self<span class="hljs-selector-class">.f</span> = x^<span class="hljs-number">119</span> + x^<span class="hljs-number">117</span> + x^<span class="hljs-number">114</span> - x^<span class="hljs-number">113</span> - x^<span class="hljs-number">112</span> - x^<span class="hljs-number">110</span> - x^<span class="hljs-number">109</span> + x^<span class="hljs-number">108</span> + x^<span class="hljs-number">107</span> - x^<span class="hljs-number">106</span> - x^<span class="hljs-number">103</span> - x^<span class="hljs-number">102</span> + x^<span class="hljs-number">100</span> + x^<span class="hljs-number">98</span> + x^<span class="hljs-number">97</span> + x^<span class="hljs-number">96</span> - x^<span class="hljs-number">93</span> + x^<span class="hljs-number">92</span> + x^<span class="hljs-number">91</span> - x^<span class="hljs-number">87</span> + x^<span class="hljs-number">85</span> - x^<span class="hljs-number">81</span> + x^<span class="hljs-number">80</span> - x^<span class="hljs-number">75</span> - x^<span class="hljs-number">73</span> + x^<span class="hljs-number">72</span> - x^<span class="hljs-number">71</span> + x^<span class="hljs-number">68</span> - x^<span class="hljs-number">67</span> - x^<span class="hljs-number">66</span> - x^<span class="hljs-number">62</span> - x^<span class="hljs-number">60</span> - x^<span class="hljs-number">57</span> + x^<span class="hljs-number">52</span> - x^<span class="hljs-number">51</span> + x^<span class="hljs-number">50</span> - x^<span class="hljs-number">48</span> + x^<span class="hljs-number">45</span> - x^<span class="hljs-number">43</span> - x^<span class="hljs-number">42</span> - x^<span class="hljs-number">38</span> + x^<span class="hljs-number">37</span> - x^<span class="hljs-number">34</span> + x^<span class="hljs-number">31</span> + x^<span class="hljs-number">30</span> - x^<span class="hljs-number">26</span> + x^<span class="hljs-number">24</span> + x^<span class="hljs-number">22</span> - x^<span class="hljs-number">21</span> + x^<span class="hljs-number">20</span> - x^<span class="hljs-number">17</span> + x^<span class="hljs-number">16</span> - x^<span class="hljs-number">14</span> - x^<span class="hljs-number">13</span> + x^<span class="hljs-number">12</span> + x^<span class="hljs-number">10</span> + x^<span class="hljs-number">8</span> + x^<span class="hljs-number">7</span> + x^<span class="hljs-number">6</span> - x^<span class="hljs-number">5</span> + x<br>                self<span class="hljs-selector-class">.fp</span> = <span class="hljs-built_in">invert_poly_mod_prime</span>(self<span class="hljs-selector-class">.f</span>, self<span class="hljs-selector-class">.R</span>, self.p)<br>                self<span class="hljs-selector-class">.fq</span> = <span class="hljs-built_in">invert_poly_mod_powerof2</span>(self<span class="hljs-selector-class">.f</span>, self<span class="hljs-selector-class">.R</span>, self.q)<br>                break<br>            except:<br>                pass<br><br>        self<span class="hljs-selector-class">.h</span> = <span class="hljs-built_in">balancedmod</span>(self<span class="hljs-selector-class">.p</span> * <span class="hljs-built_in">convolution</span>(self<span class="hljs-selector-class">.fq</span>, self<span class="hljs-selector-class">.g</span>, self.R), self<span class="hljs-selector-class">.q</span>, self.R)<br>    def <span class="hljs-built_in">getPubKey</span>(self):<br>        return self<span class="hljs-selector-class">.h</span><br>    def <span class="hljs-built_in">encrypt</span>(self, m):<br>        r = <span class="hljs-built_in">random_poly</span>(self<span class="hljs-selector-class">.N</span>, self<span class="hljs-selector-class">.d</span>, self.d)<br>        return <span class="hljs-built_in">balancedmod</span>(<span class="hljs-built_in">convolution</span>(self<span class="hljs-selector-class">.h</span>, r, self.R) + m, self<span class="hljs-selector-class">.q</span>, self.R)<br><br>    def <span class="hljs-built_in">decrypt</span>(self, c):<br>        <span class="hljs-selector-tag">a</span> = <span class="hljs-built_in">balancedmod</span>(<span class="hljs-built_in">convolution</span>(c, self<span class="hljs-selector-class">.f</span>, self.R), self<span class="hljs-selector-class">.q</span>, self.R)<br>        return <span class="hljs-built_in">balancedmod</span>(<span class="hljs-built_in">convolution</span>(<span class="hljs-selector-tag">a</span>, self<span class="hljs-selector-class">.fp</span>, self.R), self<span class="hljs-selector-class">.p</span>, self.R)<br><br>    def <span class="hljs-built_in">encode</span>(self, val):<br>        poly = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(self.N):<br>            poly += ((val % self.p) - self<span class="hljs-selector-class">.p</span> <span class="hljs-comment">// 2) * (x ** i)</span><br>            val <span class="hljs-comment">//= self.p</span><br>        return poly<br><br>    def <span class="hljs-built_in">decode</span>(self, poly):<br>        result = <span class="hljs-number">0</span><br>        ll = poly<span class="hljs-selector-class">.list</span>()<br>        <span class="hljs-keyword">for</span> idx, val <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(ll):<br>            result += (val + self<span class="hljs-selector-class">.p</span> <span class="hljs-comment">// 2) * (self.p ** idx)</span><br>        return result<br><br>    def <span class="hljs-built_in">poly_from_list</span>(self, l: list):<br>        return <span class="hljs-built_in">Zx</span>(l)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    N = <span class="hljs-number">160</span><br>    d = <span class="hljs-number">30</span><br>    <span class="hljs-selector-tag">p</span> = <span class="hljs-number">3</span><br>    <span class="hljs-selector-tag">q</span> = <span class="hljs-number">65536</span><br><br>    flag = b<span class="hljs-string">&#x27;cnss&#123;&#125;&#x27;</span><br>    cipher = <span class="hljs-built_in">NTRUCipher</span>(N, <span class="hljs-selector-tag">p</span>, <span class="hljs-selector-tag">q</span>, d)<br>    # cipher<span class="hljs-selector-class">.f</span> = x^<span class="hljs-number">31</span> - x^<span class="hljs-number">29</span> + x^<span class="hljs-number">28</span> - x^<span class="hljs-number">27</span> + x^<span class="hljs-number">26</span> + x^<span class="hljs-number">25</span> + x^<span class="hljs-number">24</span> + x^<span class="hljs-number">23</span> + x^<span class="hljs-number">22</span> - x^<span class="hljs-number">21</span> - x^<span class="hljs-number">19</span> - x^<span class="hljs-number">18</span> + x^<span class="hljs-number">17</span> - x^<span class="hljs-number">15</span> - x^<span class="hljs-number">14</span> - x^<span class="hljs-number">11</span> - x^<span class="hljs-number">9</span> + x^<span class="hljs-number">8</span> - x^<span class="hljs-number">6</span> + x^<span class="hljs-number">2</span> + x<br>    # cipher<span class="hljs-selector-class">.g</span> = -x^<span class="hljs-number">31</span> - x^<span class="hljs-number">30</span> - x^<span class="hljs-number">29</span> - x^<span class="hljs-number">28</span> + x^<span class="hljs-number">27</span> + x^<span class="hljs-number">25</span> - x^<span class="hljs-number">23</span> + x^<span class="hljs-number">22</span> + x^<span class="hljs-number">21</span> - x^<span class="hljs-number">19</span> + x^<span class="hljs-number">18</span> + x^<span class="hljs-number">15</span> - x^<span class="hljs-number">13</span> + x^<span class="hljs-number">11</span> - x^<span class="hljs-number">10</span> - x^<span class="hljs-number">9</span> + x^<span class="hljs-number">6</span> - x^<span class="hljs-number">5</span> + x^<span class="hljs-number">2</span> + x<br>    <br>    # <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;[Pk]---------&quot;</span>)<br>    h = cipher<span class="hljs-selector-class">.getPubKey</span>()<br>    msg = <span class="hljs-built_in">bytes_to_long</span>(flag)<br>    encode_msg = cipher<span class="hljs-selector-class">.encode</span>(msg)<br>    c = cipher<span class="hljs-selector-class">.encrypt</span>(encode_msg)<br>    # <span class="hljs-built_in">print</span>(f<span class="hljs-string">&#x27;c=&#123;c&#125;&#x27;</span>)<br>    mm = cipher<span class="hljs-selector-class">.decrypt</span>(c)<br>    decode_msg = cipher<span class="hljs-selector-class">.decode</span>(mm)<br>    assert decode_msg == msg<br></code></pre></td></tr></table></figure>
+<h3 id="2-格攻击">2.格攻击</h3>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs stylus">Zx = <span class="hljs-built_in">PolynomialRing</span>(ZZ, <span class="hljs-string">&#x27;x&#x27;</span>)<br>x = Zx<span class="hljs-selector-class">.gen</span>()<br><br>N = <span class="hljs-number">160</span><br>d = <span class="hljs-number">40</span><br><span class="hljs-selector-tag">p</span> = <span class="hljs-number">3</span><br><span class="hljs-selector-tag">q</span> = <span class="hljs-number">65536</span><br><br>R = x ** N - <span class="hljs-number">1</span><br>h = -<span class="hljs-number">31082</span>*x^<span class="hljs-number">159</span> - <span class="hljs-number">14617</span>*x^<span class="hljs-number">158</span> + <span class="hljs-number">19918</span>*x^<span class="hljs-number">157</span> - <span class="hljs-number">8036</span>*x^<span class="hljs-number">156</span> + <span class="hljs-number">10147</span>*x^<span class="hljs-number">155</span> + <span class="hljs-number">5021</span>*x^<span class="hljs-number">154</span> - <span class="hljs-number">17815</span>*x^<span class="hljs-number">153</span> + <span class="hljs-number">10103</span>*x^<span class="hljs-number">152</span> + <span class="hljs-number">16807</span>*x^<span class="hljs-number">151</span> + <span class="hljs-number">24567</span>*x^<span class="hljs-number">150</span> - <span class="hljs-number">32433</span>*x^<span class="hljs-number">149</span> - <span class="hljs-number">703</span>*x^<span class="hljs-number">148</span> + <span class="hljs-number">28524</span>*x^<span class="hljs-number">147</span> - <span class="hljs-number">13881</span>*x^<span class="hljs-number">146</span> + <span class="hljs-number">11259</span>*x^<span class="hljs-number">145</span> - <span class="hljs-number">29004</span>*x^<span class="hljs-number">144</span> - <span class="hljs-number">14694</span>*x^<span class="hljs-number">143</span> + <span class="hljs-number">26176</span>*x^<span class="hljs-number">142</span> + <span class="hljs-number">6530</span>*x^<span class="hljs-number">141</span> - <span class="hljs-number">4860</span>*x^<span class="hljs-number">140</span> - <span class="hljs-number">28793</span>*x^<span class="hljs-number">139</span> + <span class="hljs-number">24449</span>*x^<span class="hljs-number">138</span> + <span class="hljs-number">4066</span>*x^<span class="hljs-number">137</span> - <span class="hljs-number">14562</span>*x^<span class="hljs-number">136</span> - <span class="hljs-number">27298</span>*x^<span class="hljs-number">135</span> + <span class="hljs-number">28889</span>*x^<span class="hljs-number">134</span> + <span class="hljs-number">21079</span>*x^<span class="hljs-number">133</span> + <span class="hljs-number">21872</span>*x^<span class="hljs-number">132</span> + <span class="hljs-number">25410</span>*x^<span class="hljs-number">131</span> + <span class="hljs-number">3974</span>*x^<span class="hljs-number">130</span> + <span class="hljs-number">24782</span>*x^<span class="hljs-number">129</span> - <span class="hljs-number">15777</span>*x^<span class="hljs-number">128</span> - <span class="hljs-number">16591</span>*x^<span class="hljs-number">127</span> - <span class="hljs-number">30704</span>*x^<span class="hljs-number">126</span> + <span class="hljs-number">4323</span>*x^<span class="hljs-number">125</span> - <span class="hljs-number">18939</span>*x^<span class="hljs-number">124</span> - <span class="hljs-number">15416</span>*x^<span class="hljs-number">123</span> - <span class="hljs-number">18393</span>*x^<span class="hljs-number">122</span> - <span class="hljs-number">23652</span>*x^<span class="hljs-number">121</span> + <span class="hljs-number">15108</span>*x^<span class="hljs-number">120</span> - <span class="hljs-number">27891</span>*x^<span class="hljs-number">119</span> + <span class="hljs-number">2678</span>*x^<span class="hljs-number">118</span> + <span class="hljs-number">10772</span>*x^<span class="hljs-number">117</span> - <span class="hljs-number">427</span>*x^<span class="hljs-number">116</span> - <span class="hljs-number">26667</span>*x^<span class="hljs-number">115</span> - <span class="hljs-number">25516</span>*x^<span class="hljs-number">114</span> - <span class="hljs-number">6688</span>*x^<span class="hljs-number">113</span> + <span class="hljs-number">28600</span>*x^<span class="hljs-number">112</span> - <span class="hljs-number">18337</span>*x^<span class="hljs-number">111</span> - <span class="hljs-number">12960</span>*x^<span class="hljs-number">110</span> - <span class="hljs-number">21229</span>*x^<span class="hljs-number">109</span> - <span class="hljs-number">27071</span>*x^<span class="hljs-number">108</span> - <span class="hljs-number">1122</span>*x^<span class="hljs-number">107</span> - <span class="hljs-number">30649</span>*x^<span class="hljs-number">106</span> - <span class="hljs-number">25769</span>*x^<span class="hljs-number">105</span> - <span class="hljs-number">26115</span>*x^<span class="hljs-number">104</span> - <span class="hljs-number">5834</span>*x^<span class="hljs-number">103</span> + <span class="hljs-number">14995</span>*x^<span class="hljs-number">102</span> + <span class="hljs-number">19029</span>*x^<span class="hljs-number">101</span> - <span class="hljs-number">22440</span>*x^<span class="hljs-number">100</span> + <span class="hljs-number">1664</span>*x^<span class="hljs-number">99</span> + <span class="hljs-number">9560</span>*x^<span class="hljs-number">98</span> - <span class="hljs-number">25381</span>*x^<span class="hljs-number">97</span> + <span class="hljs-number">20032</span>*x^<span class="hljs-number">96</span> - <span class="hljs-number">18057</span>*x^<span class="hljs-number">95</span> - <span class="hljs-number">17361</span>*x^<span class="hljs-number">94</span> + <span class="hljs-number">12687</span>*x^<span class="hljs-number">93</span> + <span class="hljs-number">1236</span>*x^<span class="hljs-number">92</span> - <span class="hljs-number">9883</span>*x^<span class="hljs-number">91</span> + <span class="hljs-number">29129</span>*x^<span class="hljs-number">90</span> + <span class="hljs-number">3807</span>*x^<span class="hljs-number">89</span> + <span class="hljs-number">12829</span>*x^<span class="hljs-number">88</span> - <span class="hljs-number">20639</span>*x^<span class="hljs-number">87</span> - <span class="hljs-number">11764</span>*x^<span class="hljs-number">86</span> - <span class="hljs-number">25030</span>*x^<span class="hljs-number">85</span> + <span class="hljs-number">15743</span>*x^<span class="hljs-number">84</span> - <span class="hljs-number">3589</span>*x^<span class="hljs-number">83</span> - <span class="hljs-number">1436</span>*x^<span class="hljs-number">82</span> + <span class="hljs-number">21181</span>*x^<span class="hljs-number">81</span> + <span class="hljs-number">13943</span>*x^<span class="hljs-number">80</span> + <span class="hljs-number">31511</span>*x^<span class="hljs-number">79</span> - <span class="hljs-number">19732</span>*x^<span class="hljs-number">78</span> + <span class="hljs-number">6337</span>*x^<span class="hljs-number">77</span> + <span class="hljs-number">22965</span>*x^<span class="hljs-number">76</span> - <span class="hljs-number">23698</span>*x^<span class="hljs-number">75</span> + <span class="hljs-number">10601</span>*x^<span class="hljs-number">74</span> + <span class="hljs-number">8477</span>*x^<span class="hljs-number">73</span> - <span class="hljs-number">31571</span>*x^<span class="hljs-number">72</span> - <span class="hljs-number">27846</span>*x^<span class="hljs-number">71</span> + <span class="hljs-number">28105</span>*x^<span class="hljs-number">70</span> - <span class="hljs-number">29146</span>*x^<span class="hljs-number">69</span> - <span class="hljs-number">29142</span>*x^<span class="hljs-number">68</span> - <span class="hljs-number">32182</span>*x^<span class="hljs-number">67</span> - <span class="hljs-number">11087</span>*x^<span class="hljs-number">66</span> + <span class="hljs-number">6757</span>*x^<span class="hljs-number">65</span> + <span class="hljs-number">16893</span>*x^<span class="hljs-number">64</span> - <span class="hljs-number">30174</span>*x^<span class="hljs-number">63</span> + <span class="hljs-number">1756</span>*x^<span class="hljs-number">62</span> - <span class="hljs-number">14660</span>*x^<span class="hljs-number">61</span> + <span class="hljs-number">24670</span>*x^<span class="hljs-number">60</span> + <span class="hljs-number">9178</span>*x^<span class="hljs-number">59</span> + <span class="hljs-number">25364</span>*x^<span class="hljs-number">58</span> - <span class="hljs-number">15133</span>*x^<span class="hljs-number">57</span> - <span class="hljs-number">6543</span>*x^<span class="hljs-number">56</span> + <span class="hljs-number">2235</span>*x^<span class="hljs-number">55</span> + <span class="hljs-number">22861</span>*x^<span class="hljs-number">54</span> + <span class="hljs-number">26487</span>*x^<span class="hljs-number">53</span> + <span class="hljs-number">1703</span>*x^<span class="hljs-number">52</span> + <span class="hljs-number">15899</span>*x^<span class="hljs-number">51</span> + <span class="hljs-number">8163</span>*x^<span class="hljs-number">50</span> - <span class="hljs-number">16708</span>*x^<span class="hljs-number">49</span> - <span class="hljs-number">4605</span>*x^<span class="hljs-number">48</span> - <span class="hljs-number">27949</span>*x^<span class="hljs-number">47</span> - <span class="hljs-number">4871</span>*x^<span class="hljs-number">46</span> + <span class="hljs-number">1192</span>*x^<span class="hljs-number">45</span> - <span class="hljs-number">415</span>*x^<span class="hljs-number">44</span> + <span class="hljs-number">20678</span>*x^<span class="hljs-number">43</span> + <span class="hljs-number">21537</span>*x^<span class="hljs-number">42</span> + <span class="hljs-number">17271</span>*x^<span class="hljs-number">41</span> + <span class="hljs-number">8947</span>*x^<span class="hljs-number">40</span> + <span class="hljs-number">31942</span>*x^<span class="hljs-number">39</span> - <span class="hljs-number">25564</span>*x^<span class="hljs-number">38</span> - <span class="hljs-number">3313</span>*x^<span class="hljs-number">37</span> - <span class="hljs-number">28654</span>*x^<span class="hljs-number">36</span> - <span class="hljs-number">24128</span>*x^<span class="hljs-number">35</span> + <span class="hljs-number">28209</span>*x^<span class="hljs-number">34</span> - <span class="hljs-number">24904</span>*x^<span class="hljs-number">33</span> + <span class="hljs-number">764</span>*x^<span class="hljs-number">32</span> - <span class="hljs-number">14770</span>*x^<span class="hljs-number">31</span> + <span class="hljs-number">27748</span>*x^<span class="hljs-number">30</span> + <span class="hljs-number">20821</span>*x^<span class="hljs-number">29</span> - <span class="hljs-number">16078</span>*x^<span class="hljs-number">28</span> - <span class="hljs-number">29480</span>*x^<span class="hljs-number">27</span> + <span class="hljs-number">4958</span>*x^<span class="hljs-number">26</span> + <span class="hljs-number">7593</span>*x^<span class="hljs-number">25</span> + <span class="hljs-number">10794</span>*x^<span class="hljs-number">24</span> + <span class="hljs-number">31009</span>*x^<span class="hljs-number">23</span> - <span class="hljs-number">12029</span>*x^<span class="hljs-number">22</span> + <span class="hljs-number">9734</span>*x^<span class="hljs-number">21</span> + <span class="hljs-number">21313</span>*x^<span class="hljs-number">20</span> - <span class="hljs-number">28660</span>*x^<span class="hljs-number">19</span> - <span class="hljs-number">21860</span>*x^<span class="hljs-number">18</span> + <span class="hljs-number">23568</span>*x^<span class="hljs-number">17</span> - <span class="hljs-number">29022</span>*x^<span class="hljs-number">16</span> + <span class="hljs-number">24796</span>*x^<span class="hljs-number">15</span> + <span class="hljs-number">3138</span>*x^<span class="hljs-number">14</span> - <span class="hljs-number">3758</span>*x^<span class="hljs-number">13</span> + <span class="hljs-number">12681</span>*x^<span class="hljs-number">12</span> - <span class="hljs-number">11138</span>*x^<span class="hljs-number">11</span> + <span class="hljs-number">22079</span>*x^<span class="hljs-number">10</span> + <span class="hljs-number">10426</span>*x^<span class="hljs-number">9</span> - <span class="hljs-number">25911</span>*x^<span class="hljs-number">8</span> - <span class="hljs-number">10304</span>*x^<span class="hljs-number">7</span> - <span class="hljs-number">19399</span>*x^<span class="hljs-number">6</span> + <span class="hljs-number">21475</span>*x^<span class="hljs-number">5</span> + <span class="hljs-number">6728</span>*x^<span class="hljs-number">4</span> - <span class="hljs-number">22420</span>*x^<span class="hljs-number">3</span> - <span class="hljs-number">11358</span>*x^<span class="hljs-number">2</span> + <span class="hljs-number">2746</span>*x + <span class="hljs-number">2175</span><br>c = <span class="hljs-number">827</span>*x^<span class="hljs-number">159</span> - <span class="hljs-number">28788</span>*x^<span class="hljs-number">158</span> + <span class="hljs-number">11676</span>*x^<span class="hljs-number">157</span> - <span class="hljs-number">9492</span>*x^<span class="hljs-number">156</span> - <span class="hljs-number">15856</span>*x^<span class="hljs-number">155</span> - <span class="hljs-number">19059</span>*x^<span class="hljs-number">154</span> + <span class="hljs-number">6551</span>*x^<span class="hljs-number">153</span> + <span class="hljs-number">7457</span>*x^<span class="hljs-number">152</span> + <span class="hljs-number">3018</span>*x^<span class="hljs-number">151</span> - <span class="hljs-number">3351</span>*x^<span class="hljs-number">150</span> - <span class="hljs-number">25905</span>*x^<span class="hljs-number">149</span> + <span class="hljs-number">27240</span>*x^<span class="hljs-number">148</span> + <span class="hljs-number">24667</span>*x^<span class="hljs-number">147</span> + <span class="hljs-number">13367</span>*x^<span class="hljs-number">146</span> + <span class="hljs-number">10679</span>*x^<span class="hljs-number">145</span> + <span class="hljs-number">4797</span>*x^<span class="hljs-number">144</span> + <span class="hljs-number">32097</span>*x^<span class="hljs-number">143</span> + <span class="hljs-number">11718</span>*x^<span class="hljs-number">142</span> + <span class="hljs-number">7061</span>*x^<span class="hljs-number">141</span> - <span class="hljs-number">1948</span>*x^<span class="hljs-number">140</span> - <span class="hljs-number">11412</span>*x^<span class="hljs-number">139</span> - <span class="hljs-number">23573</span>*x^<span class="hljs-number">138</span> + <span class="hljs-number">28496</span>*x^<span class="hljs-number">137</span> + <span class="hljs-number">32132</span>*x^<span class="hljs-number">136</span> + <span class="hljs-number">5327</span>*x^<span class="hljs-number">135</span> + <span class="hljs-number">30416</span>*x^<span class="hljs-number">134</span> + <span class="hljs-number">6158</span>*x^<span class="hljs-number">133</span> - <span class="hljs-number">20550</span>*x^<span class="hljs-number">132</span> + <span class="hljs-number">18201</span>*x^<span class="hljs-number">131</span> + <span class="hljs-number">21081</span>*x^<span class="hljs-number">130</span> + <span class="hljs-number">21076</span>*x^<span class="hljs-number">129</span> - <span class="hljs-number">22003</span>*x^<span class="hljs-number">128</span> + <span class="hljs-number">22761</span>*x^<span class="hljs-number">127</span> - <span class="hljs-number">20067</span>*x^<span class="hljs-number">126</span> - <span class="hljs-number">28503</span>*x^<span class="hljs-number">125</span> + <span class="hljs-number">14044</span>*x^<span class="hljs-number">124</span> + <span class="hljs-number">14657</span>*x^<span class="hljs-number">123</span> - <span class="hljs-number">19561</span>*x^<span class="hljs-number">122</span> + <span class="hljs-number">15105</span>*x^<span class="hljs-number">121</span> - <span class="hljs-number">13874</span>*x^<span class="hljs-number">120</span> + <span class="hljs-number">4391</span>*x^<span class="hljs-number">119</span> + <span class="hljs-number">10027</span>*x^<span class="hljs-number">118</span> - <span class="hljs-number">5434</span>*x^<span class="hljs-number">117</span> + <span class="hljs-number">5853</span>*x^<span class="hljs-number">116</span> - <span class="hljs-number">28767</span>*x^<span class="hljs-number">115</span> - <span class="hljs-number">20771</span>*x^<span class="hljs-number">114</span> - <span class="hljs-number">32534</span>*x^<span class="hljs-number">113</span> - <span class="hljs-number">28131</span>*x^<span class="hljs-number">112</span> - <span class="hljs-number">14639</span>*x^<span class="hljs-number">111</span> + <span class="hljs-number">30551</span>*x^<span class="hljs-number">110</span> - <span class="hljs-number">5851</span>*x^<span class="hljs-number">109</span> + <span class="hljs-number">12912</span>*x^<span class="hljs-number">108</span> + <span class="hljs-number">9832</span>*x^<span class="hljs-number">107</span> - <span class="hljs-number">27307</span>*x^<span class="hljs-number">106</span> + <span class="hljs-number">31912</span>*x^<span class="hljs-number">105</span> + <span class="hljs-number">12445</span>*x^<span class="hljs-number">104</span> - <span class="hljs-number">13595</span>*x^<span class="hljs-number">103</span> + <span class="hljs-number">180</span>*x^<span class="hljs-number">102</span> - <span class="hljs-number">28864</span>*x^<span class="hljs-number">101</span> + <span class="hljs-number">2697</span>*x^<span class="hljs-number">100</span> - <span class="hljs-number">10658</span>*x^<span class="hljs-number">99</span> - <span class="hljs-number">6828</span>*x^<span class="hljs-number">98</span> + <span class="hljs-number">28310</span>*x^<span class="hljs-number">97</span> - <span class="hljs-number">25950</span>*x^<span class="hljs-number">96</span> + <span class="hljs-number">2790</span>*x^<span class="hljs-number">95</span> + <span class="hljs-number">5194</span>*x^<span class="hljs-number">94</span> + <span class="hljs-number">21198</span>*x^<span class="hljs-number">93</span> - <span class="hljs-number">18733</span>*x^<span class="hljs-number">92</span> - <span class="hljs-number">25159</span>*x^<span class="hljs-number">91</span> - <span class="hljs-number">8584</span>*x^<span class="hljs-number">90</span> + <span class="hljs-number">637</span>*x^<span class="hljs-number">89</span> - <span class="hljs-number">30097</span>*x^<span class="hljs-number">88</span> - <span class="hljs-number">27323</span>*x^<span class="hljs-number">87</span> + <span class="hljs-number">19035</span>*x^<span class="hljs-number">86</span> + <span class="hljs-number">16007</span>*x^<span class="hljs-number">85</span> + <span class="hljs-number">3098</span>*x^<span class="hljs-number">84</span> + <span class="hljs-number">30858</span>*x^<span class="hljs-number">83</span> + <span class="hljs-number">2395</span>*x^<span class="hljs-number">82</span> + <span class="hljs-number">26950</span>*x^<span class="hljs-number">81</span> - <span class="hljs-number">23633</span>*x^<span class="hljs-number">80</span> - <span class="hljs-number">18422</span>*x^<span class="hljs-number">79</span> + <span class="hljs-number">20408</span>*x^<span class="hljs-number">78</span> - <span class="hljs-number">25472</span>*x^<span class="hljs-number">77</span> - <span class="hljs-number">12691</span>*x^<span class="hljs-number">76</span> - <span class="hljs-number">9347</span>*x^<span class="hljs-number">75</span> - <span class="hljs-number">24963</span>*x^<span class="hljs-number">74</span> - <span class="hljs-number">30570</span>*x^<span class="hljs-number">73</span> + <span class="hljs-number">16046</span>*x^<span class="hljs-number">72</span> + <span class="hljs-number">21716</span>*x^<span class="hljs-number">71</span> - <span class="hljs-number">20667</span>*x^<span class="hljs-number">70</span> - <span class="hljs-number">5193</span>*x^<span class="hljs-number">69</span> + <span class="hljs-number">7870</span>*x^<span class="hljs-number">68</span> + <span class="hljs-number">3035</span>*x^<span class="hljs-number">67</span> - <span class="hljs-number">10604</span>*x^<span class="hljs-number">66</span> + <span class="hljs-number">1072</span>*x^<span class="hljs-number">65</span> - <span class="hljs-number">13541</span>*x^<span class="hljs-number">64</span> - <span class="hljs-number">24707</span>*x^<span class="hljs-number">63</span> - <span class="hljs-number">30203</span>*x^<span class="hljs-number">62</span> + <span class="hljs-number">192</span>*x^<span class="hljs-number">61</span> - <span class="hljs-number">9920</span>*x^<span class="hljs-number">60</span> - <span class="hljs-number">26149</span>*x^<span class="hljs-number">59</span> - <span class="hljs-number">6387</span>*x^<span class="hljs-number">58</span> - <span class="hljs-number">25086</span>*x^<span class="hljs-number">57</span> + <span class="hljs-number">29876</span>*x^<span class="hljs-number">56</span> - <span class="hljs-number">7267</span>*x^<span class="hljs-number">55</span> - <span class="hljs-number">20927</span>*x^<span class="hljs-number">54</span> - <span class="hljs-number">15841</span>*x^<span class="hljs-number">53</span> - <span class="hljs-number">14910</span>*x^<span class="hljs-number">52</span> - <span class="hljs-number">30501</span>*x^<span class="hljs-number">51</span> + <span class="hljs-number">14929</span>*x^<span class="hljs-number">50</span> - <span class="hljs-number">5987</span>*x^<span class="hljs-number">49</span> + <span class="hljs-number">2002</span>*x^<span class="hljs-number">48</span> - <span class="hljs-number">20599</span>*x^<span class="hljs-number">47</span> - <span class="hljs-number">13489</span>*x^<span class="hljs-number">46</span> - <span class="hljs-number">26459</span>*x^<span class="hljs-number">45</span> + <span class="hljs-number">26335</span>*x^<span class="hljs-number">44</span> + <span class="hljs-number">26597</span>*x^<span class="hljs-number">43</span> - <span class="hljs-number">30213</span>*x^<span class="hljs-number">42</span> + <span class="hljs-number">8866</span>*x^<span class="hljs-number">41</span> + <span class="hljs-number">18173</span>*x^<span class="hljs-number">40</span> - <span class="hljs-number">3975</span>*x^<span class="hljs-number">39</span> - <span class="hljs-number">15388</span>*x^<span class="hljs-number">38</span> - <span class="hljs-number">5311</span>*x^<span class="hljs-number">37</span> - <span class="hljs-number">19972</span>*x^<span class="hljs-number">36</span> - <span class="hljs-number">9169</span>*x^<span class="hljs-number">35</span> - <span class="hljs-number">17439</span>*x^<span class="hljs-number">34</span> - <span class="hljs-number">22100</span>*x^<span class="hljs-number">33</span> - <span class="hljs-number">22956</span>*x^<span class="hljs-number">32</span> - <span class="hljs-number">19639</span>*x^<span class="hljs-number">31</span> + <span class="hljs-number">7753</span>*x^<span class="hljs-number">30</span> - <span class="hljs-number">32440</span>*x^<span class="hljs-number">29</span> + <span class="hljs-number">14194</span>*x^<span class="hljs-number">28</span> + <span class="hljs-number">6990</span>*x^<span class="hljs-number">27</span> + <span class="hljs-number">13291</span>*x^<span class="hljs-number">26</span> + <span class="hljs-number">15908</span>*x^<span class="hljs-number">25</span> + <span class="hljs-number">20108</span>*x^<span class="hljs-number">24</span> + <span class="hljs-number">19429</span>*x^<span class="hljs-number">23</span> + <span class="hljs-number">1290</span>*x^<span class="hljs-number">22</span> + <span class="hljs-number">29204</span>*x^<span class="hljs-number">21</span> + <span class="hljs-number">10700</span>*x^<span class="hljs-number">20</span> + <span class="hljs-number">10343</span>*x^<span class="hljs-number">19</span> - <span class="hljs-number">18267</span>*x^<span class="hljs-number">18</span> - <span class="hljs-number">1314</span>*x^<span class="hljs-number">17</span> + <span class="hljs-number">6111</span>*x^<span class="hljs-number">16</span> + <span class="hljs-number">19243</span>*x^<span class="hljs-number">15</span> - <span class="hljs-number">31644</span>*x^<span class="hljs-number">14</span> - <span class="hljs-number">23278</span>*x^<span class="hljs-number">13</span> - <span class="hljs-number">14388</span>*x^<span class="hljs-number">12</span> + <span class="hljs-number">29190</span>*x^<span class="hljs-number">11</span> + <span class="hljs-number">25308</span>*x^<span class="hljs-number">10</span> + <span class="hljs-number">16840</span>*x^<span class="hljs-number">9</span> - <span class="hljs-number">31782</span>*x^<span class="hljs-number">8</span> - <span class="hljs-number">16088</span>*x^<span class="hljs-number">7</span> - <span class="hljs-number">9940</span>*x^<span class="hljs-number">6</span> + <span class="hljs-number">13891</span>*x^<span class="hljs-number">5</span> + <span class="hljs-number">15244</span>*x^<span class="hljs-number">4</span> + <span class="hljs-number">14168</span>*x^<span class="hljs-number">3</span> - <span class="hljs-number">21735</span>*x^<span class="hljs-number">2</span> - <span class="hljs-number">24052</span>*x + <span class="hljs-number">5890</span><br><br>A = <span class="hljs-built_in">Matrix</span>(ZZ, <span class="hljs-number">2</span> * N, <span class="hljs-number">2</span> * N)<br><br>hh = <span class="hljs-built_in">balancedmod</span>(<span class="hljs-built_in">inverse_mod</span>(<span class="hljs-selector-tag">p</span>, q) * h, <span class="hljs-selector-tag">q</span>, R) <br>hh = <span class="hljs-built_in">inverse_mod</span>(<span class="hljs-selector-tag">p</span>, q) * h % <span class="hljs-selector-tag">q</span><br>H = hh<span class="hljs-selector-class">.coefficients</span>(sparse=False)<br><span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N):<br>    A<span class="hljs-selector-attr">[i, i]</span> = <span class="hljs-number">1</span><br>    A<span class="hljs-selector-attr">[i+N, i+N]</span> = <span class="hljs-selector-tag">q</span><br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N):<br>        A<span class="hljs-selector-attr">[i, j+N]</span> = H<span class="hljs-selector-attr">[-i+j]</span><br><br>C = A<span class="hljs-selector-class">.LLL</span>()<br><span class="hljs-keyword">for</span> row <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N):<br>    ff = C<span class="hljs-selector-attr">[row]</span><span class="hljs-selector-attr">[:N]</span><br>    gg = C<span class="hljs-selector-attr">[row]</span><span class="hljs-selector-attr">[N:]</span><br>    f = <span class="hljs-built_in">Zx</span>(<span class="hljs-built_in">list</span>(ff))<br>    g = <span class="hljs-built_in">Zx</span>(<span class="hljs-built_in">list</span>(gg))<br>    decrypt = <span class="hljs-built_in">NTRUCipher</span>(N, <span class="hljs-selector-tag">p</span>, <span class="hljs-selector-tag">q</span>, d)<br>    decrypt<span class="hljs-selector-class">.f</span> = f<br>    decrypt<span class="hljs-selector-class">.g</span> = g<br>    try:<br>        decrypt<span class="hljs-selector-class">.fp</span> = <span class="hljs-built_in">invert_poly_mod_prime</span>(f, R, p)<br>        decrypt<span class="hljs-selector-class">.fq</span> = <span class="hljs-built_in">invert_poly_mod_powerof2</span>(f, R, q)<br>        break<br>    except:<br>        continue<br>mm = decrypt<span class="hljs-selector-class">.decrypt</span>(c)<br>decode_msg = decrypt<span class="hljs-selector-class">.decode</span>(mm)<br><span class="hljs-function"><span class="hljs-title">long_to_bytes</span><span class="hljs-params">(decode_msg)</span></span><br></code></pre></td></tr></table></figure>
+<h3 id="3-重复明文攻击">3.重复明文攻击</h3>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs stylus">def <span class="hljs-built_in">balancedmod_new</span>(f,<span class="hljs-selector-tag">q</span>,quo):<br>    g = <span class="hljs-built_in">list</span>(((f<span class="hljs-selector-attr">[i]</span> + q<span class="hljs-comment">//2) % q) - q//2 for i in range(n))</span><br>    return <span class="hljs-built_in">Zx</span>(g) % quo<br><br>def <span class="hljs-built_in">convolution_new</span>(f,g,quo):<br>    return (f * g) % quo<br><br>def <span class="hljs-built_in">invertmodprime_new</span>(f,<span class="hljs-selector-tag">p</span>,quo):<br>    T = Zx<span class="hljs-selector-class">.change_ring</span>(<span class="hljs-built_in">Integers</span>(p))<span class="hljs-selector-class">.quotient</span>(quo)<br>    return <span class="hljs-built_in">Zx</span>(<span class="hljs-built_in">lift</span>(<span class="hljs-number">1</span> / <span class="hljs-built_in">T</span>(f)))<br><br>def <span class="hljs-built_in">invertmodpowerof2_new</span>(f,<span class="hljs-selector-tag">q</span>,quo):<br>    <span class="hljs-selector-id">#print</span>(f, <span class="hljs-selector-tag">q</span>, quo)<br>    assert <span class="hljs-selector-tag">q</span><span class="hljs-selector-class">.is_power_of</span>(<span class="hljs-number">2</span>)<br>    g = <span class="hljs-built_in">invertmodprime_new</span>(f,<span class="hljs-number">2</span>,quo)<br>    <span class="hljs-selector-id">#print</span>(<span class="hljs-string">&quot;g:&quot;</span>, g)<br>    while True:<br>        r = <span class="hljs-built_in">balancedmod_new</span>(<span class="hljs-built_in">convolution_new</span>(g,f,quo),<span class="hljs-selector-tag">q</span>,quo)<br>        <span class="hljs-keyword">if</span> r == <span class="hljs-number">1</span>: return g<br>        g = <span class="hljs-built_in">balancedmod_new</span>(<span class="hljs-built_in">convolution_new</span>(g,<span class="hljs-number">2</span> - r,quo),<span class="hljs-selector-tag">q</span>,quo)<br><br>        <br>def <span class="hljs-built_in">get_delta_r</span>(delta_e, factor, g):<br>    quo = (x^n-<span class="hljs-number">1</span>) <span class="hljs-comment">// factor</span><br>    h_ = h <span class="hljs-comment">// factor</span><br>    delta_e = delta_e <span class="hljs-comment">// factor</span><br>    delta_r = <span class="hljs-built_in">balancedmod_new</span>(<span class="hljs-built_in">convolution_new</span>(<span class="hljs-built_in">invertmodpowerof2_new</span>(h_, <span class="hljs-number">128</span>, quo), delta_e, quo), <span class="hljs-number">128</span>, quo)<br>    return delta_r<br>    <br>def <span class="hljs-built_in">get_r</span>(num, d):<br>    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, num):<br>        delta_r = <span class="hljs-selector-attr">[]</span><br>        <span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, num):<br>            <span class="hljs-keyword">if</span> <span class="hljs-selector-tag">i</span> == k:<br>                continue<br>            delta_e = eis<span class="hljs-selector-attr">[i]</span> - eis<span class="hljs-selector-attr">[k]</span><br>            delta_r<span class="hljs-selector-class">.append</span>(<span class="hljs-built_in">get_delta_r</span>(delta_e, x - <span class="hljs-number">1</span>, <span class="hljs-number">2</span>))<br>        r0 = <span class="hljs-selector-attr">[[]</span> <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n)]<br>        <span class="hljs-keyword">for</span> dr <span class="hljs-keyword">in</span> delta_r:<br>            coefficient = dr<span class="hljs-selector-class">.padded_list</span>()<br>            <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(coefficient)):<br>                r0<span class="hljs-selector-attr">[j]</span><span class="hljs-selector-class">.append</span>(coefficient<span class="hljs-selector-attr">[j]</span>)<br><br>        <span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(r0)):<br>            try:<br>                r0<span class="hljs-selector-attr">[i]</span> = <span class="hljs-built_in">-max</span>(r0<span class="hljs-selector-attr">[i]</span>, key = r0<span class="hljs-selector-attr">[i]</span>.count)<br>            except:<br>                r0<span class="hljs-selector-attr">[i]</span> = <span class="hljs-number">0</span><br><br>        r_ans = <span class="hljs-built_in">Zx</span>(r0)<br>        eff = r_ans<span class="hljs-selector-class">.coefficients</span>()<br>        <span class="hljs-keyword">if</span> eff<span class="hljs-selector-class">.count</span>(<span class="hljs-number">1</span>) == d and eff<span class="hljs-selector-class">.count</span>(-<span class="hljs-number">1</span>) == d:<br>            return r_ans, k<br>    return <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br><br>def <span class="hljs-built_in">decrypt</span>():<br>    r, k = <span class="hljs-built_in">get_r</span>(num, d)<br>    msgpoly = <span class="hljs-built_in">balancedmod</span>(eis<span class="hljs-selector-attr">[k]</span> - <span class="hljs-built_in">convolution</span>(publickey,r), q)<br>    msg = <span class="hljs-built_in">decode</span>(msgpoly)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">l2b</span>(msg))<br><br><span class="hljs-function"><span class="hljs-title">decrypt</span><span class="hljs-params">()</span></span><br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/knowledge/" class="category-chain-item">knowledge</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/lattice/">#lattice</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>NTRU attack</div>
+      <div>https://algellar.github.io/2023/01/26/Lattice/NTRU attack/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>algellar</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/25/Lattice/Hidden%20Subset%20Sums%20Problem/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/24/Math/HalfGCD/" title="Half-GCD">
+                        <span class="hidden-mobile">Half-GCD</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
