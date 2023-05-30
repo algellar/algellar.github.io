@@ -227,15 +227,76 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/05/30/RSA/RSA%20construct/" target="_self">
+          RSA construct
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/30/RSA/RSA%20construct/" target="_self">
+        <div>
+          本文整理了国赛Ciscn两道利用RSA.construct函数漏洞的题目 Ciscn-badkey1 123456789101112131415161718192021222324252627282930313233signal.alarm(10)print(&quot;Give me a bad RSA keypair.&quot;)try:    p = int(input(&#x27;p =
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-30 16:35" pubdate>
+              2023-05-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/knowledge/" class="category-chain-item">knowledge</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/RSA/">#RSA</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/02/25/Lattice/Hidden%20Subset%20Sums%20Problem/" target="_self">
-          
+          hssp
         </a>
       </h1>
 
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/02/25/Lattice/Hidden%20Subset%20Sums%20Problem/" target="_self">
         <div>
-          vα=(α1,⋯ ,αn,M)v_\alpha = (\alpha_1,\cdots,\alpha_n,M)vα​=(α1​,⋯,αn​,M) , u∈Zmu\in Z^mu∈Zm 和 bbb  垂直。 因为 b=α1x1+⋯αnxn+kMb=\alpha_1x_1+\cdots \alpha_nx_n+kMb=α1​x1​+⋯αn​xn​+kM , 从而 pu=(u⋅x1,⋯ ,u⋅xn,u⋅k
+          $v_\alpha = (\alpha_1,\cdots,\alpha_n,M)$ , $u\in Z^m$ 和 $b$  垂直。 因为 $b=\alpha_1x_1+\cdots \alpha_nx_n+kM$ , 从而 $p_u=(u\cdot x_1,\cdots,u\cdot x_n,u\cdot k)$ 和 $v_\alpha$ 垂直。 $\perp$
         </div>
       </a>
 
@@ -249,6 +310,34 @@
           </div>
         
         
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/knowledge/" class="category-chain-item">knowledge</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/lattice/">#lattice</a>
+            
+          </div>
         
       </div>
     </article>
@@ -268,7 +357,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/01/26/Lattice/NTRU%20attack/" target="_self">
         <div>
-          NTRU 常见攻击 本文总结了几种NTRU攻击，包括经典格攻击、多次加密同一明文攻击。 NTRU加密流程  有些时候 h=p∗Fq∗gh=p*F_q*gh=p∗Fq​∗g，e≡r∗h+m  (mod  q)e \equiv r*h+m \;(mod\;q)e≡r∗h+m(modq) ，如果这样做，ppp 理论上可以不公开。 条件 q&gt;(6d+1)pq&gt;(6d+1)pq&gt;(6d+1
+          NTRU 常见攻击 本文总结了几种NTRU攻击，包括经典格攻击、多次加密同一明文攻击。 NTRU加密流程  有些时候 $h=pF_qg$，$e \equiv r*h+m ;(mod;q)$ ，如果这样做，$p$ 理论上可以不公开。 条件 $q&gt;(6d+1)p$ 需要的原因在于 $pgr+f*m;(mod; q)$ 的系数要小于 $q$ ，以便进行后一步解密。分析如下： $pgr$ 的系数最大
         </div>
       </a>
 
@@ -390,7 +479,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/01/22/Math/resultant/" target="_self">
         <div>
-          结式计算 结式，是用来判断两个多项式之间是否互素的一种方式。 对于给定的多项式 f(x,y),g(x,y)f(x,y),g(x,y)f(x,y),g(x,y) ，如果 gcd(f,g)!=1gcd(f,g)!=1gcd(f,g)!=1，那么 f,gf,gf,g 的结式为0。 有如下三种方式计算 $res_x(f,g) $。 1.sylvester_matrix 1h = f.sylvester_m
+          结式计算 结式，是用来判断两个多项式之间是否互素的一种方式。 对于给定的多项式 $f(x,y),g(x,y)$ ，如果 $gcd(f,g)!=1$，那么 $f,g$ 的结式为0。 有如下三种方式计算 $res_x(f,g) $。 1.sylvester_matrix 1h = f.sylvester_matrix(g, x).det().univariate_polynomial().monic(
         </div>
       </a>
 
@@ -451,7 +540,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/01/15/Math/p+x/" target="_self">
         <div>
-          起源 最初是观察到，有如下事实：∀p&gt;3,∃x&gt;0, s.t.( p−x,p+x)\forall p&gt;3,\exists x&gt;0,\ s.t. (\ p-x,p+x )∀p&gt;3,∃x&gt;0, s.t.( p−x,p+x)  is primes. 随后又发现，所有的素数都可以用这种方式生成(考虑了1是素数的情形)。
+          起源 最初是观察到，有如下事实：$\forall p&gt;3,\exists x&gt;0,\ s.t. (\ p-x,p+x )$  is primes. 随后又发现，所有的素数都可以用这种方式生成(考虑了1是素数的情形)。
         </div>
       </a>
 
@@ -512,7 +601,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/01/11/elliptic%20curve/Singular%20Curves/" target="_self">
         <div>
-          奇异椭圆定义 从代数上来说，如果椭圆曲线方程 y2=x3+Ax+By^2=x^3+Ax+By2=x3+Ax+B 的判别式 Δ=4A3+27B2=0\Delta=4A^3+27B^2=0Δ=4A3+27B2=0 ，那么该椭圆就是奇异的。从几何图像上来看，就是椭圆曲线关于 xxx 轴的交点有重根，这是因为 ((r1−r2)(r1−r3)(r2−r3))2=−Δ((r_1-r_2)(r_1-r_3)(r
+          奇异椭圆定义 从代数上来说，如果椭圆曲线方程 $y^2=x^3+Ax+B$ 的判别式 $\Delta=4A^3+27B^2=0$ ，那么该椭圆就是奇异的。从几何图像上来看，就是椭圆曲线关于 $x$ 轴的交点有重根，这是因为 $((r_1-r_2)(r_1-r_3)(r_2-r_3))^2=-\Delta$ ,其中 $r_1,r_2,r_3$ 为交点横坐标。 两种奇异椭圆曲线 接下来研究两种简单的奇
         </div>
       </a>
 
@@ -573,7 +662,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/12/27/RSA/RSA%20oracle/" target="_self">
         <div>
-          Manger’s attack 这种oracle会判断接受到的数字 mmm 是否大于一个给定的数字 BBB 。如果 m≤Bm \le Bm≤B 就返回 TrueTrueTrue ，否则返回 FalseFalseFalse , m∈Integer(n)m \in Integer(n)m∈Integer(n) 。 Manger’s attack就是利用这个oracle恢复出 mmm ，大致思想就是先一
+          Manger’s attack 这种oracle会判断接受到的数字 $m$ 是否大于一个给定的数字 $B$ 。如果 $m \le B$ 就返回 $True$ ，否则返回 $False$ , $m \in Integer(n)$ 。 Manger’s attack就是利用这个oracle恢复出 $m$ ，大致思想就是先一次找到 $f_1,f_2$ ，使得$f_1\cdot m\in [B,2B)$
         </div>
       </a>
 
@@ -634,7 +723,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/11/20/Lattice/Inequality_Solving_with_CVP/" target="_self">
         <div>
-          给了一个Padding Oracle，每次将接收到的c先解密，然后告诉你对应的明文有没有经过padding。即要满足： cd≈K(mod  n)c^d \approx K (mod\; n) cd≈K(modn) 也就是： L≤m≡cd(mod  n)≤RL\le m\equiv c^d (mod\; n)\le R L≤m≡cd(modn)≤R 考虑到可以找到一系列aia_iai​​使得: L≤
+          给了一个Padding Oracle，每次将接收到的c先解密，然后告诉你对应的明文有没有经过padding。即要满足： $$ c^d \approx K (mod; n) $$ 也就是： $$ L\le m\equiv c^d (mod; n)\le R $$ 考虑到可以找到一系列$a_i$​使得: $$ L\le a_im (mod; n)\le R $$ 就可以这样构造Lattice： $$
         </div>
       </a>
 
@@ -695,68 +784,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/11/20/Lattice/create%20lattice%20for%20PRNG/" target="_self">
         <div>
-          CSAW中的crypto一道题 给出a0,a1,b0,b1,n1,n2a_0,a_1, b_0, b_1, n_1, n_2a0​,a1​,b0​,b1​,n1​,n2​,以及递推序列  \begin{align} &amp;x_n \equiv a_0x_{n-1}+a_1x_{n-2} (\bmod n_1)\\   &amp;y_n \equiv b_0y_{n-1}+b_1y_{n-2}
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-20 00:00" pubdate>
-              2022-11-20
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/compet/" class="category-chain-item">compet</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/lattice/">#lattice</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/20/Lattice/reconstruct%20modulus%20by%20lattice/" target="_self">
-          reconstruct modulus by lattice
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/11/20/Lattice/reconstruct%20modulus%20by%20lattice/" target="_self">
-        <div>
-          题目给出了一组方程，形式为： emi≡ci( mod n)    e^{m_i} \equiv c_i(\bmod n) emi​≡ci​(modn) 然而mim_imi​很大，无法通过求gcdgcdgcd来获得nnn。 由于方程的组数足够多，如果将所有方程联系起来可有效减小指数。 格子的构造如下： (m11m21⋮⋱mn⋯⋯⋯1)\left(  \begin{matrix}   m_1 &amp
+          CSAW中的crypto一道题 给出$a_0,a_1, b_0, b_1, n_1, n_2$,以及递推序列 $ \begin{align} &amp;x_n \equiv a_0x_{n-1}+a_1x_{n-2} (\bmod n_1)\ &amp;y_n \equiv b_0y_{n-1}+b_1y_{n-2} (\bmod n_2)\ &amp;z_n \equiv x_n-y_n (\b
         </div>
       </a>
 
