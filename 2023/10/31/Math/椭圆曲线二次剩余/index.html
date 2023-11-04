@@ -16,22 +16,24 @@
   <meta name="author" content="algellar">
   <meta name="keywords" content="">
   
-    <meta name="description" content="结式计算 结式，是用来判断两个多项式之间是否互素的一种方式。 对于给定的多项式 f(x,y),g(x,y)f(x,y),g(x,y)f(x,y),g(x,y) ，如果 gcd(f,g)!&#x3D;1gcd(f,g)!&#x3D;1gcd(f,g)!&#x3D;1，那么 f,gf,gf,g 的结式为0。 有如下三种方式计算 $res_x(f,g) $。 1.sylvester_matrix 1h &#x3D; f.sylvester_m">
+    <meta name="description" content="问题引入 对于一条椭圆曲线 E:y2&#x3D;x3+ax+bE:y^2&#x3D;x^3+ax+bE:y2&#x3D;x3+ax+b ，如果我们知道其中的一个点 Q&#x3D;2PQ&#x3D;2PQ&#x3D;2P 要如何求 PPP 呢？ 如果 EEE 的阶是奇数，那么通过求2的逆元可以很快算出 PPP，但阶是偶数情况要如何处理？ 解决方法 通过查阅相关资料 finite field - Elliptic Curve - Divide by 2 - C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="结式的计算方法">
-<meta property="og:url" content="https://algellar.github.io/2023/01/22/Math/resultant/index.html">
+<meta property="og:title" content="Elliptic Curve - Divide by 2">
+<meta property="og:url" content="https://algellar.github.io/2023/10/31/Math/%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF%E4%BA%8C%E6%AC%A1%E5%89%A9%E4%BD%99/index.html">
 <meta property="og:site_name" content="迅行">
-<meta property="og:description" content="结式计算 结式，是用来判断两个多项式之间是否互素的一种方式。 对于给定的多项式 f(x,y),g(x,y)f(x,y),g(x,y)f(x,y),g(x,y) ，如果 gcd(f,g)!&#x3D;1gcd(f,g)!&#x3D;1gcd(f,g)!&#x3D;1，那么 f,gf,gf,g 的结式为0。 有如下三种方式计算 $res_x(f,g) $。 1.sylvester_matrix 1h &#x3D; f.sylvester_m">
+<meta property="og:description" content="问题引入 对于一条椭圆曲线 E:y2&#x3D;x3+ax+bE:y^2&#x3D;x^3+ax+bE:y2&#x3D;x3+ax+b ，如果我们知道其中的一个点 Q&#x3D;2PQ&#x3D;2PQ&#x3D;2P 要如何求 PPP 呢？ 如果 EEE 的阶是奇数，那么通过求2的逆元可以很快算出 PPP，但阶是偶数情况要如何处理？ 解决方法 通过查阅相关资料 finite field - Elliptic Curve - Divide by 2 - C">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-22T13:12:09.155Z">
-<meta property="article:modified_time" content="2023-01-23T02:22:13.883Z">
+<meta property="og:image" content="c:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png">
+<meta property="article:published_time" content="2023-10-31T15:39:06.541Z">
+<meta property="article:modified_time" content="2023-10-31T15:54:25.311Z">
 <meta property="article:author" content="algellar">
 <meta property="article:tag" content="Math">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="c:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png">
   
   
   
-  <title>结式的计算方法 - 迅行</title>
+  <title>Elliptic Curve - Divide by 2 - 迅行</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="结式的计算方法"></span>
+            <span id="subtitle" data-typed-text="Elliptic Curve - Divide by 2"></span>
           
         </div>
 
@@ -249,12 +251,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">结式的计算方法</h1>
+            <h1 style="display: none">Elliptic Curve - Divide by 2</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月23日 上午
+                    本文最后更新于：2023年10月31日 晚上
                   
                 
               </p>
@@ -262,16 +264,13 @@
             
               <div class="markdown-body">
                 
-                <h1>结式计算</h1>
-<p>结式，是用来判断两个多项式之间是否互素的一种方式。</p>
-<p>对于给定的多项式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>g</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x,y),g(x,y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> ，如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>c</mi><mi>d</mi><mo stretchy="false">(</mo><mi>f</mi><mo separator="true">,</mo><mi>g</mi><mo stretchy="false">)</mo><mo stretchy="false">!</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">gcd(f,g)!=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">c</span><span class="mord mathdefault">d</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>，那么 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo separator="true">,</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">f,g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span></span></span></span> 的结式为0。</p>
-<p>有如下三种方式计算 $res_x(f,g) $。</p>
-<h2 id="1-sylvester-matrix">1.sylvester_matrix</h2>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">h = f<span class="hljs-selector-class">.sylvester_matrix</span>(g, x)<span class="hljs-selector-class">.det</span>()<span class="hljs-selector-class">.univariate_polynomial</span>()<span class="hljs-selector-class">.monic</span>()<br></code></pre></td></tr></table></figure>
-<h2 id="2-resultant">2.resultant</h2>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus">P.&lt;x, y&gt; = <span class="hljs-built_in">PolynomialRing</span>(ZZ)<br>f<span class="hljs-selector-class">.resultant</span>(g, x)<span class="hljs-selector-class">.univariate_polynomial</span>()<span class="hljs-selector-class">.change_ring</span>(<span class="hljs-built_in">Zmod</span>(n))<span class="hljs-selector-class">.monic</span>()<br></code></pre></td></tr></table></figure>
-<h2 id="3-groebner-basis">3.groebner basis</h2>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">P = <span class="hljs-built_in">Zmod</span>(n)<span class="hljs-selector-attr">[<span class="hljs-string">&quot;x, y&quot;</span>]</span><br>I = <span class="hljs-built_in">ideal</span>(<span class="hljs-selector-attr">[g, f]</span>)<br>I<span class="hljs-selector-class">.groebner_basis</span>()<span class="hljs-selector-attr">[0]</span><span class="hljs-selector-class">.univariate_polynomial</span>()<span class="hljs-selector-class">.monic</span>()<br></code></pre></td></tr></table></figure>
+                <h2 id="问题引入">问题引入</h2>
+<p>对于一条椭圆曲线 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>:</mo><msup><mi>y</mi><mn>2</mn></msup><mo>=</mo><msup><mi>x</mi><mn>3</mn></msup><mo>+</mo><mi>a</mi><mi>x</mi><mo>+</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">E:y^2=x^3+ax+b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span></span></span></span> ，如果我们知道其中的一个点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo>=</mo><mn>2</mn><mi>P</mi></mrow><annotation encoding="application/x-tex">Q=2P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span> 要如何求 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span> 呢？</p>
+<p>如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span> 的阶是奇数，那么通过求2的逆元可以很快算出 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span>，但阶是偶数情况要如何处理？</p>
+<h2 id="解决方法">解决方法</h2>
+<p>通过查阅相关资料 <a target="_blank" rel="noopener" href="https://crypto.stackexchange.com/questions/55069/elliptic-curve-divide-by-2">finite field - Elliptic Curve - Divide by 2 - Cryptography Stack Exchange</a> 、 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1605.09279.pdf">1605.09279.pdf (arxiv.org)</a></p>
+<p>有一套计算公式可以快速算出。</p>
+<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png" srcset="/img/loading.gif" lazyload alt="image-20231031235403288" style="zoom:70%;" />
 
                 
               </div>
@@ -317,8 +316,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>结式的计算方法</div>
-      <div>https://algellar.github.io/2023/01/22/Math/resultant/</div>
+      <div>Elliptic Curve - Divide by 2</div>
+      <div>https://algellar.github.io/2023/10/31/Math/椭圆曲线二次剩余/</div>
     </div>
     <div class="license-meta">
       
@@ -330,7 +329,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月22日</div>
+          <div>2023年10月31日</div>
         </div>
       
       
@@ -362,9 +361,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/24/Math/HalfGCD/" title="Half-GCD">
+                      <a href="/2023/10/31/elliptic%20curve/Elliptic%20Curve%20-%20Divide%20by%202/" title="Elliptic Curve - Divide by 2">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Half-GCD</span>
+                        <span class="hidden-mobile">Elliptic Curve - Divide by 2</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -372,8 +371,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/11/elliptic%20curve/Singular%20Curves/" title="Singular Curves">
-                        <span class="hidden-mobile">Singular Curves</span>
+                      <a href="/2023/10/30/Math/CRC/" title="CRC">
+                        <span class="hidden-mobile">CRC</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
