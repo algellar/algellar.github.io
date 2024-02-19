@@ -16,24 +16,22 @@
   <meta name="author" content="algellar">
   <meta name="keywords" content="">
   
-    <meta name="description" content="问题引入 对于一条椭圆曲线 E:y2&#x3D;x3+ax+bE:y^2&#x3D;x^3+ax+bE:y2&#x3D;x3+ax+b ，如果我们知道其中的一个点 Q&#x3D;2PQ&#x3D;2PQ&#x3D;2P 要如何求 PPP 呢？ 如果 EEE 的阶是奇数，那么通过求2的逆元可以很快算出 PPP，但阶是偶数情况要如何处理？ 解决方法 通过查阅相关资料 finite field - Elliptic Curve - Divide by 2 - C">
+    <meta name="description" content="本文记录了在sagemath中安装g6k的过程。 由于github 上g6k库安装说明没有包括sage的情况，而且sage本身就已经安装了fplll等库。因此为避免下次遇到同样的问题，本文特此记录了本地g6k安装全过程。 下载g6k库 1git clone https:&#x2F;&#x2F;github.com&#x2F;fplll&#x2F;g6k.git 安装所需要的库 这个已经包含在 requirements.txt里，只需要运">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Elliptic Curve - Divide by 2">
-<meta property="og:url" content="https://algellar.github.io/2023/10/31/Math/%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF%E4%BA%8C%E6%AC%A1%E5%89%A9%E4%BD%99/index.html">
+<meta property="og:title" content="install g6k in Sage">
+<meta property="og:url" content="https://algellar.github.io/2024/02/19/Configure/install%20g6k%20in%20Sage/index.html">
 <meta property="og:site_name" content="迅行">
-<meta property="og:description" content="问题引入 对于一条椭圆曲线 E:y2&#x3D;x3+ax+bE:y^2&#x3D;x^3+ax+bE:y2&#x3D;x3+ax+b ，如果我们知道其中的一个点 Q&#x3D;2PQ&#x3D;2PQ&#x3D;2P 要如何求 PPP 呢？ 如果 EEE 的阶是奇数，那么通过求2的逆元可以很快算出 PPP，但阶是偶数情况要如何处理？ 解决方法 通过查阅相关资料 finite field - Elliptic Curve - Divide by 2 - C">
+<meta property="og:description" content="本文记录了在sagemath中安装g6k的过程。 由于github 上g6k库安装说明没有包括sage的情况，而且sage本身就已经安装了fplll等库。因此为避免下次遇到同样的问题，本文特此记录了本地g6k安装全过程。 下载g6k库 1git clone https:&#x2F;&#x2F;github.com&#x2F;fplll&#x2F;g6k.git 安装所需要的库 这个已经包含在 requirements.txt里，只需要运">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="c:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png">
-<meta property="article:published_time" content="2023-10-31T15:39:06.541Z">
-<meta property="article:modified_time" content="2023-10-31T15:54:25.311Z">
+<meta property="article:published_time" content="2024-02-19T02:29:46.661Z">
+<meta property="article:modified_time" content="2024-02-19T02:41:57.697Z">
 <meta property="article:author" content="algellar">
-<meta property="article:tag" content="Math">
+<meta property="article:tag" content="Configure">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="c:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png">
   
   
   
-  <title>Elliptic Curve - Divide by 2 - 迅行</title>
+  <title>install g6k in Sage - 迅行</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Elliptic Curve - Divide by 2"></span>
+            <span id="subtitle" data-typed-text="install g6k in Sage"></span>
           
         </div>
 
@@ -251,12 +249,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Elliptic Curve - Divide by 2</h1>
+            <h1 style="display: none">install g6k in Sage</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年10月31日 晚上
+                    本文最后更新于：2024年2月19日 上午
                   
                 
               </p>
@@ -264,13 +262,18 @@
             
               <div class="markdown-body">
                 
-                <h2 id="问题引入">问题引入</h2>
-<p>对于一条椭圆曲线 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>:</mo><msup><mi>y</mi><mn>2</mn></msup><mo>=</mo><msup><mi>x</mi><mn>3</mn></msup><mo>+</mo><mi>a</mi><mi>x</mi><mo>+</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">E:y^2=x^3+ax+b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span></span></span></span> ，如果我们知道其中的一个点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo>=</mo><mn>2</mn><mi>P</mi></mrow><annotation encoding="application/x-tex">Q=2P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span> 要如何求 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span> 呢？</p>
-<p>如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span> 的阶是奇数，那么通过求2的逆元可以很快算出 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span>，但阶是偶数情况要如何处理？</p>
-<h2 id="解决方法">解决方法</h2>
-<p>通过查阅相关资料 <a target="_blank" rel="noopener" href="https://crypto.stackexchange.com/questions/55069/elliptic-curve-divide-by-2">finite field - Elliptic Curve - Divide by 2 - Cryptography Stack Exchange</a> 、 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1605.09279.pdf">1605.09279.pdf (arxiv.org)</a></p>
-<p>有一套计算公式可以快速算出。</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20231031235403288.png" srcset="/img/loading.gif" lazyload alt="image-20231031235403288" style="zoom:70%;" />
+                <p>本文记录了在sagemath中安装g6k的过程。</p>
+<p>由于github 上g6k库安装说明没有包括sage的情况，而且sage本身就已经安装了fplll等库。因此为避免下次遇到同样的问题，本文特此记录了本地g6k安装全过程。</p>
+<h2 id="下载g6k库">下载g6k库</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/fplll/g6k.git<br></code></pre></td></tr></table></figure>
+<h2 id="安装所需要的库">安装所需要的库</h2>
+<p>这个已经包含在 requirements.txt里，只需要运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sage -pip install -r requirements.txt<br></code></pre></td></tr></table></figure>
+<h2 id="找到-sage-的解释器">找到 sage 的解释器</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">sage: import sys<br>sage: print(sys.executable)<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 <br>sage: exit<br></code></pre></td></tr></table></figure>
+<h2 id="build-g6k">Build g6k</h2>
+<p>依次运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py build_ext --inplace<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py install<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 -m pytest<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -304,7 +307,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Math/">#Math</a>
+        <a href="/tags/Configure/">#Configure</a>
       
     </div>
   
@@ -316,8 +319,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Elliptic Curve - Divide by 2</div>
-      <div>https://algellar.github.io/2023/10/31/Math/椭圆曲线二次剩余/</div>
+      <div>install g6k in Sage</div>
+      <div>https://algellar.github.io/2024/02/19/Configure/install g6k in Sage/</div>
     </div>
     <div class="license-meta">
       
@@ -329,7 +332,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年10月31日</div>
+          <div>2024年2月19日</div>
         </div>
       
       
@@ -361,18 +364,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/10/31/elliptic%20curve/Elliptic%20Curve%20-%20Divide%20by%202/" title="Elliptic Curve - Divide by 2">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Elliptic Curve - Divide by 2</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/10/30/Math/CRC/" title="CRC">
-                        <span class="hidden-mobile">CRC</span>
+                      <a href="/2024/01/22/algorithm/BSGS/" title="BSGS">
+                        <span class="hidden-mobile">BSGS</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
