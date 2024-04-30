@@ -24,7 +24,7 @@
 <meta property="og:description" content="本文记录了在sagemath中安装g6k的过程。 由于github 上g6k库安装说明没有包括sage的情况，而且sage本身就已经安装了fplll等库。因此为避免下次遇到同样的问题，本文特此记录了本地g6k安装全过程。 下载g6k库 1git clone https:&#x2F;&#x2F;github.com&#x2F;fplll&#x2F;g6k.git 安装所需要的库 这个已经包含在 requirements.txt里，只需要运">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-02-19T02:29:46.661Z">
-<meta property="article:modified_time" content="2024-02-19T02:41:57.697Z">
+<meta property="article:modified_time" content="2024-02-19T02:45:07.928Z">
 <meta property="article:author" content="algellar">
 <meta property="article:tag" content="Configure">
 <meta name="twitter:card" content="summary_large_image">
@@ -273,7 +273,10 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">sage: import sys<br>sage: print(sys.executable)<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 <br>sage: exit<br></code></pre></td></tr></table></figure>
 <h2 id="build-g6k">Build g6k</h2>
 <p>依次运行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py build_ext --inplace<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py install<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 -m pytest<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py build_ext --inplace<br>/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 setup.py install<br><br></code></pre></td></tr></table></figure>
+<p>至此 g6k 已经安装好了。</p>
+<p>可以使用g6k自带的测试查看安装是否顺利：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">/home/xunxing/sage/local/var/lib/sage/venv-python3.11.1/bin/python3 -m pytest<br></code></pre></td></tr></table></figure>
 
                 
               </div>
